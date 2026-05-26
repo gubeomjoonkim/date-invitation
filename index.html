@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>💌 Date Night Invitation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink:    #ff6b8a;
+    --rose:    #ff4d6d;
+    --blush:   #ffc8d3;
+    --cream:   #fff5f7;
+    --peach:   #ffb3c1;
+    --deep:    #c9184a;
+    --lavender:#e8b4f8;
+    --mint:    #b5ead7;
+    --yellow:  #ffd166;
+    --text:    #3d1a26;
+    --muted:   #8b4a5c;
+    --white:   #ffffff;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #ffe0eb 0%, #ffd6f0 30%, #e8d5f5 60%, #d6eeff 100%);
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Decorative background blobs */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .blob-1 { width:300px;height:300px;background:#ffb3c1;top:-50px;left:-50px; }
+  .blob-2 { width:250px;height:250px;background:#e8b4f8;bottom:-40px;right:-40px; }
+
+  /* Floating sparkles */
+  .sparkles-bg { position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden; }
+  .sp {
+    position:absolute;
+    font-size:14px;
+    opacity:0;
+    animation:sparkFloat linear infinite;
+  }
+  @keyframes sparkFloat {
+    0%   { opacity:0; transform:translateY(0) scale(0.5); }
+    100% { opacity:0; transform:translateY(-100vh) scale(1.2); }
+  }
+
+  .card {
+    position: relative;
+    z-index: 10;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 28px;
+    border: 2px solid rgba(255,180,200,0.5);
+    padding: 40px 24px;
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(255,107,138,0.15);
+  }
+
+  h1 {
+    font-family: 'Pacifico', cursive;
+    font-size: clamp(28px, 8vw, 38px);
+    color: var(--rose);
+    margin-bottom: 8px;
+  }
+
+  .sub-tagline { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+
+  .date-pill {
+    display: inline-block;
+    background: linear-gradient(135deg, #ff6b8a, #c9184a);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 50px;
+    margin-bottom: 24px;
+  }
+
+  .timeline { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; text-align: left; }
+
+  .activity-card {
+    background: white;
+    border: 1px solid rgba(255,180,200,0.3);
+    border-radius: 18px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .activity-emoji { font-size: 28px; }
+  .activity-name { font-weight: 800; font-size: 15px; color: var(--text); }
+  .activity-detail { font-size: 12px; color: var(--muted); }
+
+  .btn-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .btn-yes {
+    width: 100%;
+    max-width: 280px;
+    padding: 18px;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(135deg, #ff6b8a, #c9184a);
+    color: white;
+    font-weight: 800;
+    font-size: 18px;
+    box-shadow: 0 8px 20px rgba(255,107,138,0.3);
+  }
+
+  .btn-no {
+    padding: 12px 24px;
+    border-radius: 50px;
+    border: 2px solid rgba(255,107,138,0.3);
+    background: transparent;
+    color: var(--muted);
+    font-size: 14px;
+    transition: all 0.2s ease;
+    touch-action: none;
+  }
+
+  /* Overlay */
+  .yes-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(255,220,230,0.9);
+    backdrop-filter: blur(10px);
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .yes-overlay.show { display: flex; }
+  .yes-modal { background: white; padding: 30px; border-radius: 24px; text-align: center; width: 100%; }
+
+  .cal-section { display: none; margin-top: 20px; flex-direction: column; gap: 10px; }
+  .btn-cal { padding: 12px; border: 1px solid var(--pink); border-radius: 12px; text-decoration: none; color: var(--rose); font-size: 14px; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="sparkles-bg" id="sparklesBg"></div>
+<canvas id="confetti-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:999"></canvas>
+
+<div class="card">
+  <h1>Will You Go On a<br>Date With Me? 🌸</h1>
+  <p class="sub-tagline">I've planned the cutest evening for us ✨</p>
+
+  <div class="date-pill">🗓️ Sunday, May 31, 2026 · 6 PM</div>
+
+  <div class="timeline">
+    <div class="activity-card">
+      <div class="activity-emoji">🍝</div>
+      <div>
+        <div class="activity-name">Maggiano's Little Italy</div>
+        <div class="activity-detail">Dinner at 6:00 PM</div>
+      </div>
+    </div>
+    <div class="activity-card">
+      <div class="activity-emoji">🎮</div>
+      <div>
+        <div class="activity-name">DragonClaw Arcade</div>
+        <div class="activity-detail">Win a plushie at 8:00 PM</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-yes" id="btnYes">Yes, I'd love to! 💕</button>
+    <button class="btn-no" id="btnNo">Hmm, no... 🤔</button>
+  </div>
+  <p id="teaseMsg" style="color:var(--rose); font-style:italic; margin-top:10px; font-size:14px;"></p>
+
+  <div class="cal-section" id="calSection">
+    <p style="font-size:12px; font-weight:800; color:var(--muted)">SAVE THE DATE</p>
+    <a id="googleCalLink" class="btn-cal" href="#" target="_blank">Google Calendar</a>
+  </div>
+</div>
+
+<div class="yes-overlay" id="yesOverlay">
+  <div class="yes-modal">
+    <h2 style="font-family:Pacifico; color:var(--rose); font-size:32px;">Yay! 🥳</h2>
+    <p style="margin: 15px 0; color:var(--muted)">I can't wait to see you!</p>
+    <button class="btn-yes" onclick="location.reload()">Save to Calendar 💾</button>
+  </div>
+</div>
+
+<script>
+// Sparkles
+const sparklesBg = document.getElementById('sparklesBg');
+setInterval(() => {
+  const el = document.createElement('span');
+  el.className = 'sp';
+  el.textContent = '✨';
+  el.style.left = Math.random() * 100 + 'vw';
+  el.style.bottom = '-20px';
+  el.style.animationDuration = (5 + Math.random() * 5) + 's';
+  sparklesBg.appendChild(el);
+  setTimeout(() => el.remove(), 6000);
+}, 800);
+
+// No Button Dodge (Mobile Friendly)
+const btnNo = document.getElementById('btnNo');
+const teaseMsg = document.getElementById('teaseMsg');
+let noCount = 0;
+
+function moveButton() {
+  noCount++;
+  const x = (Math.random() - 0.5) * (window.innerWidth * 0.6);
+  const y = (Math.random() - 0.5) * (window.innerHeight * 0.4);
+  btnNo.style.transform = `translate(${x}px, ${y}px)`;
+  if(noCount > 2) teaseMsg.textContent = "Almost got it! 😜";
+  if(noCount > 5) {
+    btnNo.textContent = "Okay, fine! YES! ❤️";
+    btnNo.style.background = "var(--pink)";
+    btnNo.style.color = "white";
+  }
+}
+
+btnNo.addEventListener('touchstart', (e) => {
+  if(noCount < 6) {
+    e.preventDefault();
+    moveButton();
+  }
+});
+btnNo.addEventListener('mouseover', () => { if(window.innerWidth > 768) moveButton(); });
+
+// Yes Logic
+document.getElementById('btnYes').addEventListener('click', () => {
+  document.getElementById('yesOverlay').classList.add('show');
+});
+
+// Calendar (Simplified for this example)
+const googleLink = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Date+Night+with+Me+💌&dates=20260531T180000Z/20260531T220000Z&details=Dinner+at+Maggianos+and+Arcade+Fun!&location=San+Antonio,+TX";
+document.getElementById('googleCalLink').href = googleLink;
+
+</script>
+</body>
+</html>
