@@ -227,19 +227,29 @@ const eventTitle = "💌 Date Night: Maggiano's + Arcade";
 const eventDetails = "6:00 PM: Dinner at Maggiano's Little Italy\n8:00 PM: DragonClaw Arcade\nSan Antonio, TX";
 const eventLoc = "Maggiano's Little Italy, San Antonio, TX";
 
+// ── The Fix: Time Zone Alignment ──
 function getGoogleLink() {
-  const start = "20260531T180000Z";
-  const end = "20260531T220000Z";
+  // Removing the 'Z' makes it "Floating Time," so it stays at 6 PM local
+  const start = "20260531T180000"; 
+  const end = "20260531T220000";
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&dates=${start}/${end}&details=${encodeURIComponent(eventDetails)}&location=${encodeURIComponent(eventLoc)}`;
 }
 
 function downloadICS() {
   const icsData = [
-    'BEGIN:VCALENDAR', 'VERSION:2.0', 'BEGIN:VEVENT',
-    'DTSTART:20260531T180000Z', 'DTEND:20260531T220000Z',
-    `SUMMARY:${eventTitle}`, `DESCRIPTION:${eventDetails.replace(/\n/g, '\\n')}`,
-    `LOCATION:${eventLoc}`, 'END:VEVENT', 'END:VCALENDAR'
+    'BEGIN:VCALENDAR', 
+    'VERSION:2.0', 
+    'BEGIN:VEVENT',
+    // 'TZID' is not strictly needed for floating time, but standardizing format here
+    'DTSTART:20260531T180000', 
+    'DTEND:20260531T220000',
+    `SUMMARY:${eventTitle}`, 
+    `DESCRIPTION:${eventDetails.replace(/\n/g, '\\n')}`,
+    `LOCATION:${eventLoc}`, 
+    'END:VEVENT', 
+    'END:VCALENDAR'
   ].join('\r\n');
+  
   const blob = new Blob([icsData], { type: 'text/calendar' });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
