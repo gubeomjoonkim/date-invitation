@@ -204,12 +204,12 @@
   <div class="yes-modal">
     <h2 style="font-family:Pacifico; color:var(--rose); font-size:32px;">Yay! 🥳</h2>
     <p style="margin: 15px 0; color:var(--muted)">I can't wait to see you!</p>
-    <button class="btn-yes" onclick="location.reload()">Save to Calendar 💾</button>
+    <button class="btn-yes" id="btnFinalSave">Save to Calendar 💾</button>
   </div>
 </div>
 
 <script>
-// Sparkles
+// ── Floating Sparkles ──
 const sparklesBg = document.getElementById('sparklesBg');
 setInterval(() => {
   const el = document.createElement('span');
@@ -222,7 +222,34 @@ setInterval(() => {
   setTimeout(() => el.remove(), 6000);
 }, 800);
 
-// No Button Dodge (Mobile Friendly)
+// ── Calendar Link Generators ──
+const eventTitle = "💌 Date Night: Maggiano's + Arcade";
+const eventDetails = "6:00 PM: Dinner at Maggiano's Little Italy\n8:00 PM: DragonClaw Arcade\nSan Antonio, TX";
+const eventLoc = "Maggiano's Little Italy, San Antonio, TX";
+
+function getGoogleLink() {
+  const start = "20260531T180000Z";
+  const end = "20260531T220000Z";
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&dates=${start}/${end}&details=${encodeURIComponent(eventDetails)}&location=${encodeURIComponent(eventLoc)}`;
+}
+
+function downloadICS() {
+  const icsData = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'BEGIN:VEVENT',
+    'DTSTART:20260531T180000Z', 'DTEND:20260531T220000Z',
+    `SUMMARY:${eventTitle}`, `DESCRIPTION:${eventDetails.replace(/\n/g, '\\n')}`,
+    `LOCATION:${eventLoc}`, 'END:VEVENT', 'END:VCALENDAR'
+  ].join('\r\n');
+  const blob = new Blob([icsData], { type: 'text/calendar' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = 'date-night.ics';
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── Interaction Logic ──
 const btnNo = document.getElementById('btnNo');
 const teaseMsg = document.getElementById('teaseMsg');
 let noCount = 0;
@@ -240,23 +267,25 @@ function moveButton() {
   }
 }
 
-btnNo.addEventListener('touchstart', (e) => {
-  if(noCount < 6) {
-    e.preventDefault();
-    moveButton();
-  }
-});
+btnNo.addEventListener('touchstart', (e) => { if(noCount < 6) { e.preventDefault(); moveButton(); } });
 btnNo.addEventListener('mouseover', () => { if(window.innerWidth > 768) moveButton(); });
 
-// Yes Logic
 document.getElementById('btnYes').addEventListener('click', () => {
   document.getElementById('yesOverlay').classList.add('show');
 });
 
-// Calendar (Simplified for this example)
-const googleLink = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Date+Night+with+Me+💌&dates=20260531T180000Z/20260531T220000Z&details=Dinner+at+Maggianos+and+Arcade+Fun!&location=San+Antonio,+TX";
-document.getElementById('googleCalLink').href = googleLink;
-
+// ── The Fix: Saving the Calendar ──
+document.getElementById('btnFinalSave').addEventListener('click', () => {
+  // 1. Try to open Google Calendar in a new tab
+  window.open(getGoogleLink(), '_blank');
+  
+  // 2. Also trigger the .ics download for Apple/Outlook users
+  downloadICS();
+  
+  // 3. Close the modal after a slight delay
+  setTimeout(() => {
+    document.getElementById('yesOverlay').classList.remove('show');
+    document.getElementById('calSection').style.display = 'flex';
+  }, 500);
+});
 </script>
-</body>
-</html>
